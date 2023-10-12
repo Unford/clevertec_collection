@@ -8,14 +8,8 @@ public class PriorityHeapImpl<T> extends AbstractQueue<T> {
     private final List<T> heap;
     private final Comparator<? super T> comparator;
 
-    public PriorityHeapImpl(int initialCapacity,
-                            Comparator<? super T> comparator) {
-        if (initialCapacity < 1) throw new IllegalArgumentException();
-        if (comparator == null) {
-            comparator = (Comparator<T>) (l, r) -> ((Comparable<? super T>) l).compareTo(r);
-        }
-        this.heap = new ArrayList<>(initialCapacity);
-        this.comparator = comparator;
+    public PriorityHeapImpl() {
+        this(INITIAL_CAPACITY);
     }
 
     public PriorityHeapImpl(int initialCapacity) {
@@ -26,9 +20,24 @@ public class PriorityHeapImpl<T> extends AbstractQueue<T> {
         this(INITIAL_CAPACITY, comparator);
     }
 
-    public PriorityHeapImpl() {
-        this(null);
+    public PriorityHeapImpl(int initialCapacity,
+                            Comparator<? super T> comparator) {
+        this(new ArrayList<>(initialCapacity), comparator);
     }
+
+    public PriorityHeapImpl(PriorityQueue<T> priorityQueue) {
+        this(new ArrayList<>(priorityQueue), priorityQueue.comparator());
+    }
+
+    private PriorityHeapImpl(List<T> heap, Comparator<? super T> comparator) {
+        if (comparator == null) {
+            comparator = (Comparator<T>) (l, r) -> ((Comparable<? super T>) l).compareTo(r);
+        }
+        this.heap = heap;
+        this.comparator = comparator;
+
+    }
+
 
     @Override
     public Iterator<T> iterator() {
@@ -42,8 +51,9 @@ public class PriorityHeapImpl<T> extends AbstractQueue<T> {
 
     @Override
     public boolean offer(T t) {
+        if (t == null) throw new NullPointerException();
         heap.add(t);
-        siftUp(size() - 1);
+        siftUp(size() - 1, t);
         return true;
     }
 
@@ -54,9 +64,11 @@ public class PriorityHeapImpl<T> extends AbstractQueue<T> {
         }
         T entity = heap.get(0);
         int lastElementIndex = size() - 1;
-        heap.set(0, heap.get(lastElementIndex));
+        T x = heap.get(lastElementIndex);
         heap.remove(lastElementIndex);
-        siftDown(0);
+        if (size() > 0) {
+            siftDown(0, x);
+        }
         return entity;
     }
 
@@ -78,30 +90,69 @@ public class PriorityHeapImpl<T> extends AbstractQueue<T> {
         return (i - 1) / 2;
     }
 
-    private void siftDown(int i) {
-        while (getLeftChildIndex(i) < heap.size()) {
-            int left = getLeftChildIndex(i);
+    private void siftDown(int i, T x) {
+        int half = size() >>> 1;
+        while (i < half) {
+            int child = getLeftChildIndex(i);
             int right = getRightChildIndex(i);
-            int j = left;
-
+            T c = heap.get(child);
             if (right < heap.size() &&
-                    comparator.compare(heap.get(right), heap.get(left)) > 0) {
+                    comparator.compare(c,
+                            heap.get(right)) > 0) {
 
-                j = right;
+                c = heap.get(right);
+                child = right;
             }
-            if (comparator.compare(heap.get(i), heap.get(j)) >= 0) {
+            if (comparator.compare(x, c) <= 0) {
                 break;
             }
-            Collections.swap(heap, i, j);
-            i = j;
+            heap.set(i, c);
+            i = child;
+        }
+        heap.set(i, x);
+    }
+
+    private void siftUp(int i, T x) {
+        while (i > 0) {
+            int parentIndex = getParentIndex(i);
+            T e = heap.get(parentIndex);
+            if (comparator.compare(x, e) >= 0) {
+                break;
+            }
+            heap.set(i, e);
+            i = parentIndex;
+        }
+        heap.set(i, x);
+    }
+
+
+    @Override
+    public boolean remove(Object o) {
+        int i = this.heap.indexOf(o);
+        if (i == -1)
+            return false;
+        else {
+            removeAt(i);
+            return true;
         }
     }
 
-    private void siftUp(int i) {
-        while (comparator.compare(heap.get(i), heap.get(getParentIndex(i))) < 0) {
-            Collections.swap(heap, i, getParentIndex(i));
-            i = getParentIndex(i);
+    private void removeAt(int i) {
+        int s = size() - 1;
+        if (i == s) {
+            heap.remove(i);
+        } else {
+            T moved = heap.get(s);
+            heap.remove(s);
+            siftDown(i, moved);
+            if (heap.get(i) == moved) {
+                siftUp(i, moved);
+            }
         }
+    }
+
+    public PriorityQueue<T> toPriorityQueue() {
+        return new PriorityQueue<>(heap);
     }
 
 
