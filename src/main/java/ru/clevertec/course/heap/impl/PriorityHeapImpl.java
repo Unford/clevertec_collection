@@ -35,7 +35,6 @@ public class PriorityHeapImpl<T> extends AbstractQueue<T> {
         }
         this.heap = heap;
         this.comparator = comparator;
-
     }
 
 
@@ -150,10 +149,5 @@ public class PriorityHeapImpl<T> extends AbstractQueue<T> {
             }
         }
     }
-
-    public PriorityQueue<T> toPriorityQueue() {
-        return new PriorityQueue<>(heap);
-    }
-
 
 }

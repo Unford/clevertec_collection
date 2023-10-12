@@ -1,6 +1,5 @@
 package test.clevertec.course.heap;
 
-import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import ru.clevertec.course.heap.impl.PriorityHeapImpl;
@@ -16,7 +15,7 @@ public class PriorityHeapImplBenchmark {
     private PriorityQueue<Integer> globalQueue;
 
     @Setup(Level.Invocation)
-    public void setupInvokation() throws Exception {
+    public void setupInvokation() {
         globalHeap = new PriorityHeapImpl<>();
         globalQueue = new PriorityQueue<>();
         for (int i = 0; i < ITERATION_COUNT; i++) {

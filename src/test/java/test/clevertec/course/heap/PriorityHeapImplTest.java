@@ -15,8 +15,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PriorityHeapImplTest {
-    private class TestNotComparable {
+    private static class TestNotComparable {
         private int id;
+
+        public TestNotComparable(int id) {
+            this.id = id;
+        }
     }
 
     private static class TestComparable implements Comparable<TestComparable> {
@@ -84,17 +88,21 @@ class PriorityHeapImplTest {
     }
 
 
-//    @Test todo
-//    void givenNotComparableClassWithoutComparator_whenCreateAndAdd_thenThrow() {
-//        assertThrows(ClassCastException.class,
-//                () -> new PriorityHeapImpl<TestNotComparable>()
-//                        .add(new TestNotComparable()));
-//    }
+    @Test
+    void givenNotComparableClassWithoutComparator_whenCreateAndAddMoreThanOne_thenThrow() {
+        assertThrows(ClassCastException.class,
+                () -> {
+                    PriorityHeapImpl<TestNotComparable> prior = new PriorityHeapImpl<>();
+                    prior.add(new TestNotComparable(1));
+                    prior.add(new TestNotComparable(2));
+                }
+        );
+    }
 
     @Test
     void givenNull_whenAdd_thenThrow() {
         assertThrows(NullPointerException.class,
-                () -> new PriorityHeapImpl<TestNotComparable>().add(null));
+                () -> new PriorityHeapImpl<TestComparable>().add(null));
     }
 
     @Test
