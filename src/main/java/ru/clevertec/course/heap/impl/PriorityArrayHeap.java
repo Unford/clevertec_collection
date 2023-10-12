@@ -31,6 +31,7 @@ public class PriorityArrayHeap<T> implements PriorityHeap<T> {
 
     public PriorityArrayHeap(PriorityQueue<T> priorityQueue) {
         this(((T[]) priorityQueue.toArray(new Object[0])), priorityQueue.comparator());
+        this.size = priorityQueue.size();
     }
 
     private PriorityArrayHeap(T[] heap, Comparator<? super T> comparator) {
