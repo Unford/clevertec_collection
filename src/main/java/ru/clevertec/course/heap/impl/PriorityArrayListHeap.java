@@ -1,35 +1,37 @@
 package ru.clevertec.course.heap.impl;
 
+import ru.clevertec.course.heap.PriorityHeap;
+
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class PriorityHeapImpl<T> extends AbstractQueue<T> {
+public class PriorityArrayListHeap<T> extends AbstractQueue<T> implements PriorityHeap<T> {
     private static final int INITIAL_CAPACITY = 10;
     private final List<T> heap;
     private final Comparator<? super T> comparator;
 
-    public PriorityHeapImpl() {
+    public PriorityArrayListHeap() {
         this(INITIAL_CAPACITY);
     }
 
-    public PriorityHeapImpl(int initialCapacity) {
+    public PriorityArrayListHeap(int initialCapacity) {
         this(initialCapacity, null);
     }
 
-    public PriorityHeapImpl(Comparator<? super T> comparator) {
+    public PriorityArrayListHeap(Comparator<? super T> comparator) {
         this(INITIAL_CAPACITY, comparator);
     }
 
-    public PriorityHeapImpl(int initialCapacity,
-                            Comparator<? super T> comparator) {
+    public PriorityArrayListHeap(int initialCapacity,
+                                 Comparator<? super T> comparator) {
         this(new ArrayList<>(initialCapacity), comparator);
     }
 
-    public PriorityHeapImpl(PriorityQueue<T> priorityQueue) {
+    public PriorityArrayListHeap(PriorityQueue<T> priorityQueue) {
         this(new ArrayList<>(priorityQueue), priorityQueue.comparator());
     }
 
-    private PriorityHeapImpl(List<T> heap, Comparator<? super T> comparator) {
+    private PriorityArrayListHeap(List<T> heap, Comparator<? super T> comparator) {
         if (comparator == null) {
             comparator = (Comparator<T>) (l, r) -> ((Comparable<? super T>) l).compareTo(r);
         }
