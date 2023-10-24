@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PriorityArrayHeapTest {
+class PriorityArrayHeapTest {
   
     @ParameterizedTest
     @MethodSource("IntegerPriorityHeapDataProvider")
