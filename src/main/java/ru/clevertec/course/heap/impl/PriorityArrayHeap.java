@@ -10,14 +10,15 @@ public class PriorityArrayHeap<T> implements PriorityHeap<T> {
     private T[] heap;
     private int size;
 
-    private final Comparator<? super T> comparator;
+    private final Comparator comparator;
 
     public PriorityArrayHeap() {
         this(INITIAL_CAPACITY);
     }
 
     public PriorityArrayHeap(int initialCapacity) {
-        this.comparator = (Comparator<T>) (l, r) -> ((Comparable<? super T>) l).compareTo(r);
+
+        this.comparator = Comparator.naturalOrder();
         this.heap = (T[]) new Object[initialCapacity];
         this.size = 0;
     }
