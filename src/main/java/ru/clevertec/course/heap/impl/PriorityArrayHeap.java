@@ -13,33 +13,26 @@ public class PriorityArrayHeap<T> implements PriorityHeap<T> {
     private final Comparator<? super T> comparator;
 
     public PriorityArrayHeap() {
-        this(INITIAL_CAPACITY);
+        this.comparator = (Comparator<T>) (l, r) -> ((Comparable<? super T>) l).compareTo(r);
+        this.heap = (T[]) new Object[INITIAL_CAPACITY];
+        this.size = 0;
     }
 
     public PriorityArrayHeap(int initialCapacity) {
-        this(initialCapacity, null);
+        this.comparator = (Comparator<T>) (l, r) -> ((Comparable<? super T>) l).compareTo(r);
+        this.heap = (T[]) new Object[initialCapacity];
+        this.size = 0;
     }
 
     public PriorityArrayHeap(Comparator<? super T> comparator) {
-        this(INITIAL_CAPACITY, comparator);
-    }
-
-    public PriorityArrayHeap(int initialCapacity,
-                             Comparator<? super T> comparator) {
-        this((T[]) new Object[initialCapacity > 0 ? initialCapacity : INITIAL_CAPACITY], comparator);
-    }
-
-    public PriorityArrayHeap(PriorityQueue<T> priorityQueue) {
-        this(((T[]) priorityQueue.toArray(new Object[0])), priorityQueue.comparator());
-        this.size = priorityQueue.size();
-    }
-
-    private PriorityArrayHeap(T[] heap, Comparator<? super T> comparator) {
-        if (comparator == null) {
-            comparator = (Comparator<T>) (l, r) -> ((Comparable<? super T>) l).compareTo(r);
-        }
-        this.heap = heap;
         this.comparator = comparator;
+        this.heap = (T[]) new Object[INITIAL_CAPACITY];
+        this.size = 0;
+    }
+
+    public PriorityArrayHeap(int initialCapacity, Comparator<? super T> comparator) {
+        this.comparator = comparator;
+        this.heap = (T[]) new Object[initialCapacity];
         this.size = 0;
     }
 
@@ -101,24 +94,26 @@ public class PriorityArrayHeap<T> implements PriorityHeap<T> {
     private void siftDown(int i, T x) {
         int half = size() >>> 1;
         while (i < half) {
-            int child = getLeftChildIndex(i);
+            int left = getLeftChildIndex(i);
             int right = getRightChildIndex(i);
-            T c = heap[child];
             if (right < size &&
-                    comparator.compare(c,
-                            heap[right]) > 0) {
-
-                c = heap[right];
-                child = right;
+                    comparator.compare(heap[left], heap[right]) > 0) {
+                left = right;
             }
-            if (comparator.compare(x, c) <= 0) {
+            if (comparator.compare(x, heap[left]) <= 0) {
                 break;
             }
-            heap[i] = c;
-            i = child;
+            swap(i, left);
+            i = left;
         }
         heap[i] = x;
 
+    }
+
+    private void swap(int from, int to) {
+        T temp = heap[from];
+        heap[from] = heap[to];
+        heap[to] = temp;
     }
 
     private void siftUp(int i, T x) {
@@ -140,13 +135,8 @@ public class PriorityArrayHeap<T> implements PriorityHeap<T> {
         collection.forEach(this::add);
     }
 
-    public Comparator<? super T> getComparator() {
-        return comparator;
-    }
 
     public Object[] toArray() {
-
-
         return Arrays.copyOf(heap, size);
     }
 

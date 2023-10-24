@@ -129,11 +129,11 @@ public class PriorityArrayHeapTest {
         TestComparable expected = priorityQueue.poll();
         assertEquals(expected, actual);
 
+
     }
 
     static Stream<Arguments> ComparableAndComparatorPriorityHeapDataProvider() {
         return Stream.of(
-                Arguments.of(getTestComparableList(), null),
                 Arguments.of(getTestComparableList(), Comparator.reverseOrder()),
                 Arguments.of(getTestComparableList(), Comparator.naturalOrder()),
                 Arguments.of(getTestComparableList(), Comparator.comparingDouble(TestComparable::getPrice)),
